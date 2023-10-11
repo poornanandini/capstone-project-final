@@ -68,24 +68,47 @@ const Payment = () => {
   const handleUpiIdChange = (e) => {
     setUpiId(e.target.value);
   };
+  // useEffect(() => {
+  //   const fetchLoanAmount = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost:8083/api/loan-history/${email}`);
+  //       // const response = await axios.get(http://localhost:8090/api/loan/19bcs2464@gmail.com);
+        
+        
+  //       setLoanType(response.data.typeOfLoan);
+  //       setLoanAmount(response.data.loanAmount);
+  //       setBalanceAmount(response.data.balanceAmount);
+  //       setPaidAmount(response.data.paidAmount);
+  //       setPaymentAmount(response.data.balanceAmount);
+  //     } catch (error) {
+  //       console.error('Error fetching loan amount', error);
+  //     }
+  //   };
+  // }, []);
   useEffect(() => {
-    const fetchLoanAmount = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8083/api/loan-hisory/${email}`);
-        console.log(response.data);
-        // const response = await axios.get(`http://localhost:8090/api/loan/19bcs2464@gmail.com`);
-        setLoanType(response.data.typeOfLoan);
-        setLoanAmount(response.data.loanAmount);
-        setBalanceAmount(response.data.balanceAmount);
-        setPaidAmount(response.data.paidAmount);
-        setPaymentAmount(response.data.balanceAmount);
-      } catch (error) {
-        console.error('Error fetching loan amount', error);
-      }
-    };
+    axios
+      .get(`http://localhost:8083/api/loan-history/${email}`)
+      .then((response) => {
+        const loanData = response.data[0]; // Use [0] because it's an array
+  
+        // Update state variables with fetched data
+        // setLoanAmount(loanData.loanAmount);
+        // setBalanceAmount(loanData.balanceAmount);
+        // setPaidAmount(loanData.paidAmount);
+        // setPaymentAmount(loanData.balanceAmount);
+        setLoanType(loanData.typeOfLoan);
+        setLoanAmount(loanData.loanAmount);
+        setBalanceAmount(loanData.balanceAmount);
+        setPaidAmount(loanData.paidAmount);
+        setPaymentAmount(loanData.balanceAmount);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, [email]);
 
-    fetchLoanAmount();
-  }, []);
+    //fetchLoanAmount();
+ 
   const handlePaymentOptionChange = (e) => {
     const selectedOption = e.target.value;
     setPaymentOption(selectedOption);
@@ -143,7 +166,7 @@ const Payment = () => {
 
     try {
       // Send a POST request to your backend endpoint
-      const response = axios.post('http://localhost:8085/banking/payment', paymentInfo);
+      const response = axios.post(`http://localhost:8086/banking/payment`, paymentInfo);
 
 
 
@@ -173,7 +196,7 @@ const Payment = () => {
         newBalanceAmount: newBalanceAmount,
         newPaidAmount: newPaidAmount,
       };
-      await axios.put(`http://localhost:8090/api/loan/${email}/update-payment`, updatedUserData);
+      await axios.put(`http://localhost:8083/api/loan/${email}/update-payment`, updatedUserData);
       setShowSuccessPopup(true);
 
     } catch (error) {
@@ -217,9 +240,9 @@ const Payment = () => {
       <Container fluid className="payment-container">
         <h1 className="payment-heading">Loan Payment</h1>
         <div>
-          <p className="payment-info">Total Loan Amount: ${loanAmount}</p>
-          <p className="payment-info">Outstanding Loan Amount: ${balanceAmount}</p>
-          <p className="payment-info">Paid Loan Amount: ${paidAmount}</p>
+          <p className="payment-info">Total Loan Amount: {loanAmount}</p>
+          <p className="payment-info">Outstanding Loan Amount: {balanceAmount}</p>
+          <p className="payment-info">Paid Loan Amount: {paidAmount}</p>
         </div>
         <Form onSubmit={handleSubmit}>
           <Form.Group>

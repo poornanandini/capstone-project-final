@@ -18,7 +18,7 @@ import Footer from '../Footer/Footer';
 import '../css/dashboardlayout.css'; // Include your CSS file here
 import Header from '../Header/Header';
 
-const API_URL = 'http://localhost:8082/api';
+const API_URL = 'http://localhost:8083/api';
 const email = sessionStorage.getItem('email'); // Retrieve email from session storage
 const sid=sessionStorage.getItem('id')
 
